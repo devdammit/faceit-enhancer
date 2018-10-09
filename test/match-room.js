@@ -1,5 +1,13 @@
+/** @jsx h */
 import test from 'ava'
+import { h } from 'dom-chef'
 import * as matchRoom from '../src/content/libs/match-room'
+
+test.afterEach('cleanup dom', () => {
+  while (document.body.firstChild) {
+    document.body.removeChild(document.body.firstChild)
+  }
+})
 
 test('getRoomId', t => {
   const roomId = '466ece1d-9f16-4b64-aa2d-826c60bc022f'
@@ -75,4 +83,25 @@ test('mapPlayersToPartyColorsV2', t => {
       c: colors[1]
     }
   )
+})
+
+test('getDefferedVoteTime normal situation', t => {
+  const sec = 50
+
+  const el = (
+    <div className="match-voting__message">
+      <timer>
+        <span>{sec}</span>
+        <span>s</span>
+      </timer>
+    </div>
+  )
+
+  document.body.appendChild(el)
+
+  t.is(matchRoom.getDefferedVoteTime(), sec * 1000 - matchRoom.VOTE_LEEWAY)
+})
+
+test('getDefferedVoteTime bad situation', t => {
+  t.is(matchRoom.getDefferedVoteTime(), matchRoom.VOTE_LEEWAY)
 })

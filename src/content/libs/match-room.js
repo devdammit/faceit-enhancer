@@ -6,6 +6,7 @@ import { getCurrentPath } from './location'
 
 export const FACTION_1 = 'faction1'
 export const FACTION_2 = 'faction2'
+export const VOTE_LEEWAY = 3000
 
 export const getRoomId = path => {
   const match = /room\/([0-9a-z]+-[0-9a-z]+-[0-9a-z]+-[0-9a-z]+-[0-9a-z]+(?:-[0-9a-z]+)?)/.exec(
@@ -178,3 +179,15 @@ export const mapMatchNicknamesToPlayersMemoized = mem(
     cacheKey: match => JSON.stringify(match.guid || match.id)
   }
 )
+
+export const getDefferedVoteTime = () => {
+  const elem = select('.match-voting__message timer span')
+  const leftTime =
+    elem && !isNaN(Number(elem.innerHTML)) ? Number(elem.innerHTML) * 1000 : 0
+
+  if (!leftTime) {
+    return VOTE_LEEWAY
+  }
+
+  return leftTime - VOTE_LEEWAY
+}

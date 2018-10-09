@@ -13,6 +13,12 @@ export const VETO_PREFERENCES = 'Veto Preferences'
 
 export default ({ getMenuProps, getSortableProps, getSwitchProps }) => (
   <React.Fragment>
+    <ListSubheader>General Veto Preferences</ListSubheader>
+    <ListItemSwitch
+      primary="Later the vote"
+      secondary="Delays vote at the last second"
+      {...getSwitchProps('laterTheVote')}
+    />
     <ListSubheader>Server Location Preferences</ListSubheader>
     <ListItemMenu
       primary="Region"

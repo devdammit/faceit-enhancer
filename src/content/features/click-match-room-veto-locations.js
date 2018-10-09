@@ -3,7 +3,11 @@ import { hasFeatureAttribute, setFeatureAttribute } from '../libs/dom-element'
 import storage from '../../libs/storage'
 import { notifyIf } from '../libs/utils'
 import { getQuickMatch, getMatch, getSelf } from '../libs/faceit'
-import { getRoomId, getTeamElements } from '../libs/match-room'
+import {
+  getRoomId,
+  getTeamElements,
+  getDefferedVoteTime
+} from '../libs/match-room'
 
 const FEATURE_ATTRIBUTE = 'veto-locations'
 const VETO_DELAY = 2000
@@ -40,7 +44,10 @@ export default async parentElement => {
     return
   }
 
-  const { matchRoomAutoVetoLocationItems } = await storage.getAll()
+  const {
+    laterTheVote,
+    matchRoomAutoVetoLocationItems
+  } = await storage.getAll()
   const autoVetoItems =
     matchRoomAutoVetoLocationItems[region] &&
     matchRoomAutoVetoLocationItems[region].reverse()
@@ -64,6 +71,7 @@ export default async parentElement => {
 
   const autoVeto = () => {
     const isVetoTurn = select.exists('li > button', votingListElement)
+    const timeToVote = laterTheVote ? getDefferedVoteTime() : VETO_DELAY
 
     if (!isVetoTurn) {
       return
@@ -77,7 +85,7 @@ export default async parentElement => {
       if (vetoButtonElement) {
         setTimeout(() => {
           vetoButtonElement.click()
-        }, VETO_DELAY)
+        }, timeToVote)
       }
       return Boolean(vetoButtonElement)
     })
